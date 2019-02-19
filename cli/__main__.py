@@ -1,11 +1,12 @@
 from cli.expansion import expand, continue_expand, State, VariableExpansionError
 from cli.interpretation import interpret, ParseError
 from cli.process import Exit, ArgumentError
+from os import environ
 
 
 def controller():
     """Runs cli. Supported commands: cat [file], echo, wc [file], pwd, exit, a=b."""
-    scope = {}
+    scope = environ
     while True:
         try:
             line = input("my-cli$ ")

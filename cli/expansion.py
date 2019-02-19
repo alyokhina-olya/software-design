@@ -54,6 +54,8 @@ def continue_expand(line, scope, state, token, tokens):
             state = State.DOUBLE_QUOTE
         elif line[i] == '"' and state == State.DOUBLE_QUOTE:
             state = State.BARE_STRING
+        elif line[i] == '~' and expand_variable(state):
+            token += scope['HOME']
         elif line[i] == '$' and expand_variable(state):
             variable = ""
             for j in range(i + 1, n + 1):
