@@ -1,4 +1,5 @@
 from enum import Enum
+from pathlib import Path
 
 
 class State(Enum):
@@ -33,7 +34,8 @@ def expand(line, scope):
 def continue_expand(line, scope, state, token, tokens):
     """Expands environment variables and splits command into tokens.
 
-    @:returns (state, token, tokens) which can be reused in parsing of the next line
+    @:returns (scope, state, token, tokens) which can be reused in parsing of the next line
+    @:param scope -- environment variables scope
     @:param state -- state returned by previous call, indicates whether cursor is currently inside quotes
     @:param token -- token returned by previous call, stores a prefix of the current parsing word
     @:param tokens -- tokens returned by previous call, stores previous tokens of this command
@@ -55,7 +57,7 @@ def continue_expand(line, scope, state, token, tokens):
         elif line[i] == '"' and state == State.DOUBLE_QUOTE:
             state = State.BARE_STRING
         elif line[i] == '~' and expand_variable(state):
-            token += scope['HOME']
+            token += str(Path.home())
         elif line[i] == '$' and expand_variable(state):
             variable = ""
             for j in range(i + 1, n + 1):
