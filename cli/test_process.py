@@ -2,7 +2,7 @@ import os
 from tempfile import TemporaryDirectory
 from unittest import TestCase
 
-from cli.process import CustomProcess, Echo, Pwd, Exit, Cat, Wc, Assignment, Grep
+from cli.process import CustomProcess, Echo, Pwd, Exit, Cat, Wc, Assignment, Grep, Ls, Cd
 
 
 class TestProcess(TestCase):
@@ -55,6 +55,29 @@ class TestProcess(TestCase):
             process = Cat([f.name])
             output = process.run("world", {})
             self.assertEqual("hello kitty", output)
+
+    def test_ls(self):
+        with TemporaryDirectory() as dir:
+            with open(dir + "/test", "w") as f:
+                f.write("hello\nkitty")
+
+            process = Ls([dir])
+            output = process.run(None, {})
+            self.assertEqual("test", output)
+
+    def test_cd(self):
+        with TemporaryDirectory() as dir:
+            with open(dir + "/test", "w") as f:
+                f.write("hello\nkitty")
+
+            process = Cd([dir])
+            output = process.run(None, {})
+            process_pwd = Cd([dir])
+            cur_dir = process_pwd.run(None, {})
+            self.assertEqual(dir, output)
+            self.assertEqual(dir, cur_dir)
+            process = Cd([os.getcwd()])
+            process.run(None, {})
 
     def test_wc(self):
         process = Wc([])
